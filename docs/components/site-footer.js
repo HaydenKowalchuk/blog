@@ -5,7 +5,6 @@ class SiteFooter extends HTMLElement {
 	}
 
 	connectedCallback() {
-		const author = this.getAttribute("author") || "";
 		const tagline = this.getAttribute("tagline") || "";
 		const email = this.getAttribute("email") || "";
 		const linkedin = this.getAttribute("linkedin") || "";
@@ -27,36 +26,34 @@ class SiteFooter extends HTMLElement {
 				`<a href="${gitlab}" target="_blank" rel="noopener">GitLab</a>`,
 			);
 
+		const sheet = new CSSStyleSheet();
+		sheet.replaceSync(`
+      :host {
+        display: block;
+        margin-top: 2rem;
+        color: var(--rp-subtle);
+        font-size: 0.875rem;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid var(--rp-hl-med);
+        margin-bottom: 1rem;
+      }
+      p {
+        margin: 0.4em 0;
+        line-height: 1.6;
+      }
+      a {
+        color: var(--rp-pine);
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    `);
+		this.shadowRoot.adoptedStyleSheets = [sheet];
+
 		this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: block;
-          margin-top: 2rem;
-          color: var(--rp-subtle);
-          font-size: 0.875rem;
-        }
-
-        hr {
-          border: none;
-          border-top: 1px solid var(--rp-hl-med);
-          margin-bottom: 1rem;
-        }
-
-        p {
-          margin: 0.4em 0;
-          line-height: 1.6;
-        }
-
-        a {
-          color: var(--rp-pine);
-          text-decoration: none;
-        }
-
-        a:hover {
-          text-decoration: underline;
-        }
-      </style>
-
       <hr>
       ${tagline ? `<p>${tagline}</p>` : ""}
       ${links.length ? `<p>${links.join(" · ")}.</p>` : ""}

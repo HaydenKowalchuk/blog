@@ -70,6 +70,15 @@
 	box-sizing: border-box;
 }
 
+/* Scroll sentinel for scroll-to-top component */
+.scroll-sentinel {
+	position: absolute;
+	top: 0;
+	height: 1px;
+	width: 1px;
+	pointer-events: none;
+}
+
 html {
 	-webkit-text-size-adjust: 100%;
 	text-size-adjust: 100%;
