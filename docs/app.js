@@ -154,8 +154,17 @@ const ContentService = (props, context) => {
 		const path = getState("url.path", "/");
 		const parts = path.split("/").filter(Boolean);
 
+		// Disconnect TOC observer immediately — before any DOM teardown —
+		// so the IntersectionObserver can't fire a stale "not intersecting"
+		// callback when the sentinel element is removed from the DOM.
+		if (tocObserver) {
+			tocObserver.disconnect();
+			tocObserver = null;
+		}
+
 		// Reset TOC visibility and scroll to top on every navigation
 		setState("ui.tocVisible", false);
+		setState("content.currentToc", []);
 		window.scrollTo(0, 0);
 
 		let mdFile = null;
@@ -202,26 +211,39 @@ const ContentService = (props, context) => {
 		}
 	};
 
+	let tocObserver = null;
+
+	const setupTocObserver = () => {
+		if (tocObserver) {
+			tocObserver.disconnect();
+			tocObserver = null;
+		}
+		if (!getState("content.currentToc", []).length) return;
+
+		// Wait one frame for Juris to render the sentinel into the DOM
+		requestAnimationFrame(() => {
+			const sentinel = document.querySelector(".toc-sentinel");
+			if (!sentinel) return;
+			tocObserver = new IntersectionObserver(
+				([entry]) => {
+					// Guard against the browser firing when the sentinel is
+					// removed from the DOM (e.g., article unmounts on navigation).
+					if (!document.contains(entry.target)) return;
+					setState("ui.tocVisible", !entry.isIntersecting);
+				},
+				{ threshold: 0 },
+			);
+			tocObserver.observe(sentinel);
+		});
+	};
+
 	return {
 		hooks: {
 			onRegister: async () => {
 				await Promise.all([loadPages(), loadArticleIndex()]);
 				subscribe("url.path", handleRoute);
+				subscribe("content.currentToc", setupTocObserver);
 				handleRoute();
-
-				window.addEventListener(
-					"scroll",
-					() => {
-						const path = getState("url.path", "/");
-						const isArticle = /^\/articles\/[^/]+/.test(path);
-						const hasToc = getState("content.currentToc", []).length > 0;
-						setState(
-							"ui.tocVisible",
-							isArticle && hasToc && window.scrollY > 80,
-						);
-					},
-					{ passive: true },
-				);
 
 				/* Intercept internal links rendered inside zero-md shadow DOMs */
 				document.addEventListener("click", (e) => {
@@ -302,8 +324,13 @@ const Header = (props, context) => {
 					);
 					return "sidebar" + (isArticle && tocVisible ? " toc-active" : "");
 				},
-				children: [
-					{
+				children: () => {
+					const path = getState("url.path", "/");
+					const isArticle = /^\/articles\/[^/]+/.test(path);
+					const toc = getState("content.currentToc", []);
+					const visible = getState("ui.tocVisible", false);
+
+					const navMenu = {
 						nav: {
 							children: [
 								{
@@ -364,21 +391,19 @@ const Header = (props, context) => {
 								},
 							],
 						},
-					},
-					{
-						/* Sticky TOC — fades in on article pages after scrolling */
-						nav: {
-							key: "post-toc",
-							className: () => {
-								const visible = getState("ui.tocVisible", false);
-								return "post-toc" + (visible ? " is-visible" : "");
-							},
-							children: () => {
-								const toc = getState("content.currentToc", []);
-								return [
-									{
-										div: { className: "toc-title", text: "Table of contents" },
-									},
+					};
+
+					if (!isArticle || !toc.length) return [navMenu];
+
+					return [
+						navMenu,
+						{
+							/* Sticky TOC — only rendered on article routes with headings */
+							nav: {
+								key: "post-toc",
+								className: "post-toc" + (visible ? " is-visible" : ""),
+								children: [
+									{ div: { className: "toc-title", text: "Sections" } },
 									{
 										ul: {
 											children: toc.map((item, i) => ({
@@ -399,11 +424,11 @@ const Header = (props, context) => {
 											})),
 										},
 									},
-								];
+								],
 							},
 						},
-					},
-				],
+					];
+				},
 			},
 		}),
 	};
@@ -553,6 +578,7 @@ const ArticleView = (props, context) => {
 				article: {
 					className: "post",
 					children: [
+						{ div: { className: "toc-sentinel", "aria-hidden": "true" } },
 						meta ? { h1: { text: meta.title } } : null,
 						meta
 							? {
@@ -681,6 +707,15 @@ const StaticPage = (props, context) => {
 						},
 						hasArticles ? { hr: { className: "section-divider" } } : null,
 						hasArticles ? { ArticleList: { category: pageId } } : null,
+						{
+							"site-footer": {
+								author: "Hayden Kowalchuk",
+								tagline: "Hayden Kowalchuk's blog for gamedev and interests.",
+								//email: "hayden (at) hkowsoftware dot com",
+								github: "https://github.com/mrneo240",
+								gitlab: "https://gitlab.com/HaydenKow",
+							},
+						},
 					].filter(Boolean),
 				},
 			};
