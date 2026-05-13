@@ -1,0 +1,86 @@
+/* Rosé Pine syntax highlighting for highlight.js */
+/* Used inside zero-md shadow DOM. Colors come from --rp-* custom properties */
+/* which inherit through shadow DOM from the host page's theme variables.     */
+
+.hljs {
+	background: var(--rp-overlay);
+	color: var(--rp-text);
+}
+
+/* Keywords, tags — Pine */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-built_in,
+.hljs-tag .hljs-name,
+.hljs-doctag {
+	color: var(--rp-pine);
+	font-weight: bold;
+}
+
+/* Strings, attributes — Gold */
+.hljs-string,
+.hljs-attr,
+.hljs-attribute,
+.hljs-addition,
+.hljs-template-tag,
+.hljs-template-variable {
+	color: var(--rp-gold);
+}
+
+/* Comments — Muted, italic */
+.hljs-comment,
+.hljs-quote,
+.hljs-meta {
+	color: var(--rp-muted);
+	font-style: italic;
+}
+
+/* Numbers, literals — Rose */
+.hljs-number,
+.hljs-literal,
+.hljs-regexp,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-deletion {
+	color: var(--rp-rose);
+}
+
+/* Functions, variables — Foam */
+.hljs-variable,
+.hljs-params,
+.hljs-property,
+.hljs-title.function_ {
+	color: var(--rp-foam);
+}
+
+/* Types, classes — Iris */
+.hljs-type,
+.hljs-class .hljs-title,
+.hljs-title.class_,
+.hljs-title.class_.inherited__ {
+	color: var(--rp-iris);
+}
+
+/* Section titles (markdown headings in hljs) — Love */
+.hljs-section,
+.hljs-name {
+	color: var(--rp-love);
+}
+
+/* Operators, punctuation — Subtle */
+.hljs-punctuation,
+.hljs-operator {
+	color: var(--rp-subtle);
+}
+
+.hljs-emphasis {
+	font-style: italic;
+}
+.hljs-strong {
+	font-weight: bold;
+}
+
+/* Selection highlight */
+.hljs ::selection {
+	background: var(--rp-hl-med);
+}
