@@ -63,9 +63,11 @@ const stripTopics = (text) => {
 	return [...lines.slice(0, start), ...lines.slice(end)].join("\n");
 };
 
-// Matches marked's GFM heading ID algorithm
+// Matches marked's GFM heading ID algorithm.
+// Strip markdown link syntax first so [Title](url) headings slug correctly.
 const headingSlug = (text) =>
 	text
+		.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1")
 		.toLowerCase()
 		.trim()
 		.replace(/['"\\!#$%&()*+,./:;<=>?@[\]^`{|}~]/g, "")
@@ -77,7 +79,14 @@ const scrollToHeading = (headingText) => {
 	const zeroMdEl = document.querySelector(".post zero-md");
 	if (!zeroMdEl?.shadowRoot) return;
 	const el = zeroMdEl.shadowRoot.getElementById(slug);
-	if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+	if (!el) return;
+	const reducedMotion = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	).matches;
+	el.scrollIntoView({
+		behavior: reducedMotion ? "instant" : "smooth",
+		block: "start",
+	});
 };
 
 // Extract first meaningful paragraph for use as meta description
@@ -150,9 +159,13 @@ const ContentService = (props, context) => {
 		}
 	};
 
+	let navGeneration = 0;
+	let tocObserver = null;
+
 	const handleRoute = async () => {
 		const path = getState("url.path", "/");
 		const parts = path.split("/").filter(Boolean);
+		const generation = ++navGeneration;
 
 		// Disconnect TOC observer immediately — before any DOM teardown —
 		// so the IntersectionObserver can't fire a stale "not intersecting"
@@ -162,9 +175,12 @@ const ContentService = (props, context) => {
 			tocObserver = null;
 		}
 
-		// Reset TOC visibility and scroll to top on every navigation
+		// Reset all content state on navigation start so stale content
+		// is never visible while the new fetch is in-flight.
 		setState("ui.tocVisible", false);
 		setState("content.currentToc", []);
+		setState("content.currentMarkdown", "");
+		setState("content.currentTopics", []);
 		window.scrollTo(0, 0);
 
 		let mdFile = null;
@@ -186,8 +202,11 @@ const ContentService = (props, context) => {
 		if (mdFile) {
 			try {
 				const res = await fetch(mdFile);
+				// Bail if the user navigated away while this fetch was in-flight.
+				if (generation !== navGeneration) return;
 				if (res.ok) {
 					const text = await res.text();
+					if (generation !== navGeneration) return;
 					const stripped = stripTopics(text);
 					setState("content.currentMarkdown", stripped);
 					setState("content.currentToc", extractToc(stripped));
@@ -206,12 +225,15 @@ const ContentService = (props, context) => {
 						const pg = pages.find((p) => `/${p.id}` === path);
 						updateMeta(pg?.title || "", "");
 					}
+				} else {
+					console.error(`Failed to load ${mdFile}: ${res.status}`);
 				}
-			} catch (_) {}
+			} catch (err) {
+				if (generation !== navGeneration) return;
+				console.error(`Error loading ${mdFile}:`, err);
+			}
 		}
 	};
-
-	let tocObserver = null;
 
 	const setupTocObserver = () => {
 		if (tocObserver) {
@@ -330,7 +352,6 @@ const Header = (props, context) => {
 					const path = getState("url.path", "/");
 					const isArticle = /^\/articles\/[^/]+/.test(path);
 					const toc = getState("content.currentToc", []);
-					const visible = getState("ui.tocVisible", false);
 
 					const navMenu = {
 						nav: {
@@ -405,7 +426,9 @@ const Header = (props, context) => {
 							nav: {
 								key: "post-toc",
 								"aria-label": "Table of contents",
-								className: "post-toc" + (visible ? " is-visible" : ""),
+								className: () =>
+									"post-toc" +
+									(getState("ui.tocVisible", false) ? " is-visible" : ""),
 								children: [
 									{ div: { className: "toc-title", text: "Sections" } },
 									{
@@ -416,17 +439,13 @@ const Header = (props, context) => {
 													children: [
 														{
 															a: {
-																tabindex: () => (getState("ui.tocVisible", false) ? "0" : "-1"),
+																href: `#${headingSlug(item)}`,
+																tabindex: () =>
+																	getState("ui.tocVisible", false) ? "0" : "-1",
 																text: item,
 																onclick: (e) => {
 																	e.preventDefault();
 																	scrollToHeading(item);
-																},
-																onkeydown: (e) => {
-																	if (e.key === "Enter" || e.key === " ") {
-																		e.preventDefault();
-																		scrollToHeading(item);
-																	}
 																},
 															},
 														},

@@ -58,12 +58,12 @@ p {
 
 /* Links */
 a {
-	color: var(--rp-pine);
+	color: var(--link-color);
 	text-decoration: underline;
 	text-decoration-color: var(--rp-muted);
 }
 a:hover {
-	text-decoration-color: var(--rp-pine);
+	text-decoration-color: var(--hover-color);
 }
 
 /* Emphasis */

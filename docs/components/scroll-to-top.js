@@ -76,10 +76,10 @@ class ScrollToTop extends HTMLElement {
 	}
 
 	_scrollToTop() {
-		// scrollBehavior is in documentElement.style on all modern browsers
-		// including Safari 15.4+. Fall back to a manual rAF animation for
-		// older Safari / WebKit.
-		if ("scrollBehavior" in document.documentElement.style) {
+		const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+		if (reducedMotion) {
+			window.scrollTo(0, 0);
+		} else if ("scrollBehavior" in document.documentElement.style) {
 			window.scrollTo({ top: 0, behavior: "smooth" });
 		} else {
 			const start = window.scrollY;

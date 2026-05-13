@@ -61,6 +61,8 @@
 	--rp-hl-low: #2a283e;
 	--rp-hl-med: #44415a;
 	--rp-hl-high: #56526e;
+	--link-color: var(--rp-foam);
+	--hover-color: var(--rp-foam);
 }
 
 /* Reset & Base */
@@ -496,13 +498,13 @@ a {
 
 /* Nav fades out when TOC takes over */
 .sidebar > nav:first-child {
-	transition: opacity 0.4s ease;
+	transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
 .sidebar.toc-active > nav:first-child {
 	opacity: 0;
 	pointer-events: none;
-	display: none;
+	visibility: hidden;
 }
 
 /* Responsive */
@@ -556,6 +558,17 @@ a {
 
 	.content {
 		padding: 0;
+	}
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
 	}
 }
 
