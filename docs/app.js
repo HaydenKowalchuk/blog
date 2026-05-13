@@ -255,11 +255,21 @@ const Header = (props, context) => {
 	};
 
 	const toggleTheme = () => {
+		const cycle = { light: "dark", dark: "system", system: "light" };
 		const current = getState("ui.theme", savedTheme);
-		const next = current === "light" ? "dark" : "light";
+		const next = cycle[current] ?? "system";
 		setState("ui.theme", next);
-		document.documentElement.setAttribute("data-theme", next);
-		localStorage.setItem("theme", next);
+		if (next === "system") {
+			localStorage.removeItem("theme");
+			const effective = window.matchMedia("(prefers-color-scheme: dark)")
+				.matches
+				? "dark"
+				: "light";
+			document.documentElement.setAttribute("data-theme", effective);
+		} else {
+			localStorage.setItem("theme", next);
+			document.documentElement.setAttribute("data-theme", next);
+		}
 	};
 
 	// Returns a plain { li: ... } vdom object — no component lookup needed
@@ -320,12 +330,29 @@ const Header = (props, context) => {
 															{
 																button: {
 																	id: "theme-toggle",
-																	"aria-label": "Toggle theme",
+																	"aria-label": () => {
+																		const t = getState("ui.theme", savedTheme);
+																		if (t === "light")
+																			return "Switch to dark theme";
+																		if (t === "dark")
+																			return "Switch to system theme";
+																		return "Switch to light theme";
+																	},
+																	title: () => {
+																		const t = getState("ui.theme", savedTheme);
+																		if (t === "light") return "Dark";
+																		if (t === "dark") return "System";
+																		return "Light";
+																	},
 																	onclick: toggleTheme,
-																	innerHTML: () =>
-																		getState("ui.theme", savedTheme) === "light"
-																			? `<svg class="moon-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9.37 5.51C9.19 6.15 9.1 6.82 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.19 14.93 19 12 19c-3.86 0-7-3.14-7-7C5 9.07 6.81 6.55 9.37 5.51zM12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z"/></svg>`
-																			: `<svg class="sun-icon" viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>`,
+																	innerHTML: () => {
+																		const t = getState("ui.theme", savedTheme);
+																		if (t === "light")
+																			return `<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9.37 5.51C9.19 6.15 9.1 6.82 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.19 14.93 19 12 19c-3.86 0-7-3.14-7-7C5 9.07 6.81 6.55 9.37 5.51zM12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z"/></svg>`;
+																		if (t === "dark")
+																			return `<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v1h12v-1l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>`;
+																		return `<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>`;
+																	},
 																},
 															},
 														],
@@ -725,10 +752,13 @@ const App = (props, context) => {
 	};
 };
 
-// Bootstrap — honour saved preference, then OS preference, then light
-const systemTheme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-const savedTheme = localStorage.getItem("theme") || systemTheme;
-document.documentElement.setAttribute("data-theme", savedTheme);
+// Bootstrap — honour saved preference; fall back to "system" (follows OS)
+const systemPref = window.matchMedia("(prefers-color-scheme: dark)").matches
+	? "dark"
+	: "light";
+const storedTheme = localStorage.getItem("theme"); // "light" | "dark" | null
+const savedTheme = storedTheme || "system"; // ui state: "light" | "dark" | "system"
+document.documentElement.setAttribute("data-theme", storedTheme || systemPref);
 
 const juris = new Juris({
 	logLevel: "error",
@@ -792,11 +822,13 @@ const juris = new Juris({
 });
 
 // Follow OS theme changes only when the user hasn't set a manual preference
-window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
-	if (localStorage.getItem("theme")) return;
-	const next = e.matches ? "dark" : "light";
-	document.documentElement.setAttribute("data-theme", next);
-	juris.setState("ui.theme", next);
-});
+window
+	.matchMedia("(prefers-color-scheme: dark)")
+	.addEventListener("change", (e) => {
+		if (localStorage.getItem("theme")) return;
+		const next = e.matches ? "dark" : "light";
+		document.documentElement.setAttribute("data-theme", next);
+		juris.setState("ui.theme", next);
+	});
 
 juris.render("#app");
