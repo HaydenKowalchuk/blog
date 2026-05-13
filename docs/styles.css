@@ -334,6 +334,13 @@ a {
 	font-size: 0.875em;
 	font-weight: 500;
 	transition: background var(--transition-speed) var(--transition-timing);
+	/* button reset */
+	appearance: none;
+	border: none;
+	background: none;
+	width: 100%;
+	text-align: left;
+	font-family: inherit;
 }
 
 .topics-preview:hover {

@@ -303,6 +303,7 @@ const Header = (props, context) => {
 					a: {
 						href: `#${href}`,
 						className: () => (isActive(active) ? "active" : ""),
+						"aria-current": () => (isActive(active) ? "page" : undefined),
 						text: label,
 						onclick: (e) => {
 							e.preventDefault();
@@ -317,6 +318,7 @@ const Header = (props, context) => {
 	return {
 		render: () => ({
 			aside: {
+				"aria-label": "Sidebar",
 				className: () => {
 					const tocVisible = getState("ui.tocVisible", false);
 					const isArticle = /^\/articles\/[^/]+/.test(
@@ -332,6 +334,7 @@ const Header = (props, context) => {
 
 					const navMenu = {
 						nav: {
+							"aria-label": "Site navigation",
 							children: [
 								{
 									ul: {
@@ -375,10 +378,10 @@ const Header = (props, context) => {
 																	innerHTML: () => {
 																		const t = getState("ui.theme", savedTheme);
 																		if (t === "light")
-																			return `<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M9.37 5.51C9.19 6.15 9.1 6.82 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.19 14.93 19 12 19c-3.86 0-7-3.14-7-7C5 9.07 6.81 6.55 9.37 5.51zM12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z"/></svg>`;
+																			return `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.37 5.51C9.19 6.15 9.1 6.82 9.1 7.5c0 4.08 3.32 7.4 7.4 7.4.68 0 1.35-.09 1.99-.27C17.45 17.19 14.93 19 12 19c-3.86 0-7-3.14-7-7C5 9.07 6.81 6.55 9.37 5.51zM12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4C12.92 3.04 12.46 3 12 3z"/></svg>`;
 																		if (t === "dark")
-																			return `<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v1h12v-1l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>`;
-																		return `<svg viewBox="0 0 24 24" width="16" height="16"><path fill="currentColor" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>`;
+																			return `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M20 3H4c-1.1 0-2 .9-2 2v11c0 1.1.9 2 2 2h3l-1 1v1h12v-1l-1-1h3c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 13H4V5h16v11z"/></svg>`;
+																		return `<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>`;
 																	},
 																},
 															},
@@ -401,6 +404,7 @@ const Header = (props, context) => {
 							/* Sticky TOC — only rendered on article routes with headings */
 							nav: {
 								key: "post-toc",
+								"aria-label": "Table of contents",
 								className: "post-toc" + (visible ? " is-visible" : ""),
 								children: [
 									{ div: { className: "toc-title", text: "Sections" } },
@@ -412,10 +416,17 @@ const Header = (props, context) => {
 													children: [
 														{
 															a: {
+																tabindex: () => (getState("ui.tocVisible", false) ? "0" : "-1"),
 																text: item,
 																onclick: (e) => {
 																	e.preventDefault();
 																	scrollToHeading(item);
+																},
+																onkeydown: (e) => {
+																	if (e.key === "Enter" || e.key === " ") {
+																		e.preventDefault();
+																		scrollToHeading(item);
+																	}
 																},
 															},
 														},
@@ -565,6 +576,7 @@ const ArticleView = (props, context) => {
 		const isOpen = content.classList.contains("open");
 		content.classList.toggle("open", !isOpen);
 		container.classList.toggle("open", !isOpen);
+		el.setAttribute("aria-expanded", String(!isOpen));
 	};
 
 	return {
@@ -602,8 +614,11 @@ const ArticleView = (props, context) => {
 										className: "article-topics",
 										children: [
 											{
-												div: {
+												button: {
+													type: "button",
 													className: "topics-preview",
+													"aria-expanded": "false",
+													"aria-controls": "article-topics-content",
 													onclick: (e) => toggleToc(e.currentTarget),
 													children: [
 														{ span: { className: "toc-icon" } },
@@ -611,7 +626,7 @@ const ArticleView = (props, context) => {
 														{
 															span: {
 																className: "chevron",
-																innerHTML: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`,
+																innerHTML: `<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>`,
 															},
 														},
 													],
@@ -619,6 +634,7 @@ const ArticleView = (props, context) => {
 											},
 											{
 												div: {
+													id: "article-topics-content",
 													className: "topics-content",
 													children: [
 														{
@@ -763,6 +779,7 @@ const App = (props, context) => {
 					{ Header: {} },
 					{
 						main: {
+							id: "main-content",
 							className: "content",
 							children: () => {
 								const path = getState("url.path", "/");
