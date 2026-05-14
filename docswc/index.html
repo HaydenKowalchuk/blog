@@ -15,6 +15,24 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://haydenkowalchuk.github.io/blog/" />
 
+  <!-- Module preloads — full graph so the browser fetches in parallel -->
+  <link rel="modulepreload" href="/lib/lit.js" />
+  <link rel="modulepreload" href="/lib/zero-md.min.js" />
+  <link rel="modulepreload" href="/app.js" />
+  <link rel="modulepreload" href="/components/app-store.js" />
+  <link rel="modulepreload" href="/components/app-router.js" />
+  <link rel="modulepreload" href="/components/content-service.js" />
+  <link rel="modulepreload" href="/components/app-shell.js" />
+  <link rel="modulepreload" href="/components/site-sidebar.js" />
+  <link rel="modulepreload" href="/components/about-page.js" />
+  <link rel="modulepreload" href="/components/article-list.js" />
+  <link rel="modulepreload" href="/components/article-view.js" />
+  <link rel="modulepreload" href="/components/static-page.js" />
+  <link rel="modulepreload" href="/components/not-found.js" />
+  <!-- Preload vendor CSS loaded inside zero-md shadow DOM (not discoverable by parser) -->
+  <link rel="preload" as="style" href="/vendor/rosepine-markdown.css" />
+  <link rel="preload" as="style" href="/vendor/rosepine-highlight.css" />
+
   <link rel="stylesheet" href="styles.css" />
 
 </head>

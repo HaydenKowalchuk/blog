@@ -15,6 +15,19 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://haydenkowalchuk.github.io/blog/" />
 
+    <!-- Classic script preloads (Juris + components are non-module defer/async) -->
+    <link rel="preload" as="script" href="/lib/juris-router.js" />
+    <link rel="preload" as="script" href="/lib/juris-headless.js" />
+    <link rel="preload" as="script" href="/lib/juris.min.js" />
+    <link rel="preload" as="script" href="/components/site-footer.js" />
+    <link rel="preload" as="script" href="/components/scroll-to-top.js" />
+    <link rel="preload" as="script" href="/app.js" />
+    <!-- zero-md is a module -->
+    <link rel="modulepreload" href="/lib/zero-md.min.js" />
+    <!-- Preload vendor CSS loaded inside zero-md shadow DOM (not discoverable by parser) -->
+    <link rel="preload" as="style" href="/vendor/rosepine-markdown.css" />
+    <link rel="preload" as="style" href="/vendor/rosepine-highlight.css" />
+
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body class="preload">

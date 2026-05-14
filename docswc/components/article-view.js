@@ -65,7 +65,7 @@ class ArticleView extends LitElement {
           <hr>
         ` : ''}
         ${slug ? html`<div class="md-wrapper"></div>` : ''}
-        <site-footer author="Hayden Kowalchuk" tagline="Hayden Kowalchuk's blog for gamedev and interests." github="https://github.com/mrneo240" gitlab="https://gitlab.com/HaydenKow"></site-footer>
+        <site-footer author="Hayden Kowalchuk" tagline="Hayden Kowalchuk's gamedev and interests." github="https://github.com/mrneo240" gitlab="https://gitlab.com/HaydenKow"></site-footer>
       </article>
     `;
   }

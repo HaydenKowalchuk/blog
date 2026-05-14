@@ -689,7 +689,7 @@ const ArticleView = (props, context) => {
 						{
 							"site-footer": {
 								author: "Hayden Kowalchuk",
-								tagline: "Hayden Kowalchuk's blog for gamedev and interests.",
+								tagline: "Hayden Kowalchuk's gamedev and interests.",
 								//email: "hayden (at) hkowsoftware dot com",
 								github: "https://github.com/mrneo240",
 								gitlab: "https://gitlab.com/HaydenKow",
@@ -745,7 +745,7 @@ const StaticPage = (props, context) => {
 						{
 							"site-footer": {
 								author: "Hayden Kowalchuk",
-								tagline: "Hayden Kowalchuk's blog for gamedev and interests.",
+								tagline: "Hayden Kowalchuk's gamedev and interests.",
 								//email: "hayden (at) hkowsoftware dot com",
 								github: "https://github.com/mrneo240",
 								gitlab: "https://gitlab.com/HaydenKow",
