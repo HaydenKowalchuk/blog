@@ -1,0 +1,171 @@
+/* Rosé Pine markdown styles for zero-md shadow DOM */
+/* CSS custom properties (--rp-*) are inherited from the host page, so the   */
+/* site's theme toggle (data-theme="dark") automatically drives these colors. */
+
+:host {
+	display: block;
+	position: relative;
+	contain: content;
+	max-width: 100%;
+	overflow-x: hidden;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", sans-serif;
+	font-size: 14px;
+	line-height: 1.65;
+	color: var(--rp-text);
+}
+
+:host([hidden]) {
+	display: none;
+}
+
+/* Headings */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	color: var(--rp-text);
+	font-weight: 600;
+	margin: 1.4em 0 0.5em;
+	line-height: 1.3;
+}
+
+h1 {
+	font-size: 1.6em;
+	border-bottom: 1px solid var(--rp-hl-med);
+	padding-bottom: 0.3em;
+}
+h2 {
+	font-size: 1.3em;
+	border-bottom: 1px solid var(--rp-hl-med);
+	padding-bottom: 0.2em;
+}
+h3 {
+	font-size: 1.1em;
+}
+h4,
+h5,
+h6 {
+	font-size: 1em;
+}
+
+/* Paragraphs */
+p {
+	margin: 0.7em 0;
+}
+
+/* Links */
+a {
+	color: var(--link-color);
+	text-decoration: underline;
+	text-decoration-color: var(--rp-muted);
+}
+a:hover {
+	text-decoration-color: var(--hover-color);
+}
+
+/* Emphasis */
+strong {
+	font-weight: 600;
+}
+em {
+	color: var(--rp-iris);
+	font-style: italic;
+}
+
+/* Horizontal rule */
+hr {
+	border: none;
+	border-top: 1px solid var(--rp-hl-med);
+	margin: 1.5em 0;
+}
+
+/* Blockquote */
+blockquote {
+	margin: 1em 0;
+	padding: 0.5em 1em;
+	border-left: 3px solid var(--rp-pine);
+	color: var(--rp-subtle);
+	background: var(--rp-hl-low);
+	border-radius: 0 4px 4px 0;
+}
+
+/* Lists */
+ul,
+ol {
+	padding-left: 1.5em;
+	margin: 0.6em 0;
+}
+li {
+	line-height: 1.7;
+}
+
+/* Inline code */
+:not(pre) > code {
+	background: var(--rp-overlay);
+	border-radius: 3px;
+	padding: 0.1em 0.35em;
+	font-size: 0.88em;
+	font-family: "Monaco", "Menlo", "Courier New", monospace;
+	color: var(--rp-rose);
+}
+
+/* Code blocks */
+pre {
+	background: var(--rp-overlay);
+	border: 1px solid var(--rp-hl-high);
+	border-radius: 6px;
+	padding: 1em 1.2em;
+	overflow-x: auto;
+	margin: 1.2em 0;
+}
+
+pre code {
+	background: none;
+	padding: 0;
+	border-radius: 0;
+	font-size: 12.5px;
+	line-height: 1.55;
+	color: var(--rp-text);
+	font-family: "Monaco", "Menlo", "Courier New", monospace;
+}
+
+/* Images */
+img {
+	max-width: 100%;
+	height: auto;
+	display: block;
+	margin: 1em auto;
+}
+
+/* Tables */
+table {
+	border-collapse: collapse;
+	width: 100%;
+	margin: 1em 0;
+	font-size: 0.95em;
+}
+
+th,
+td {
+	border: 1px solid var(--rp-hl-med);
+	padding: 0.5em 0.8em;
+	text-align: left;
+}
+
+th {
+	background: var(--rp-hl-low);
+	font-weight: 600;
+	color: var(--rp-text);
+}
+
+tr:nth-child(even) {
+	background: var(--rp-hl-low);
+}
+
+/* Task lists */
+input[type="checkbox"] {
+	margin-right: 0.4em;
+}

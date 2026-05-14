@@ -1,0 +1,6 @@
+{
+  "pages": [
+    { "id": "dreamcast", "title": "dreamcast", "file": "dreamcast.md", "nav": true },
+    { "id": "games", "title": "games", "file": "games.md", "nav": true }
+  ]
+}
