@@ -902,4 +902,10 @@ window
 		juris.setState("ui.theme", next);
 	});
 
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    document.body.classList.remove('preload');
+  });
+});
+
 juris.render("#app");

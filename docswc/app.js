@@ -27,5 +27,11 @@ window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e)
   document.documentElement.setAttribute('data-theme', next);
 });
 
+requestAnimationFrame(() => {
+  requestAnimationFrame(() => {
+    document.body.classList.remove('preload');
+  });
+});
+
 // Start content service (loads pages.json, articles/index.md, sets up routing)
 initContentService();
