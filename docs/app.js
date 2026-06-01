@@ -370,7 +370,7 @@ const Header = (props, context) => {
 												navLink(
 													"/articles",
 													"articles",
-													"articles",
+													"blog",
 													"nav-articles",
 												),
 												...staticLinks,
@@ -903,9 +903,9 @@ window
 	});
 
 requestAnimationFrame(() => {
-  requestAnimationFrame(() => {
-    document.body.classList.remove('preload');
-  });
+	requestAnimationFrame(() => {
+		document.body.classList.remove("preload");
+	});
 });
 
 juris.render("#app");
