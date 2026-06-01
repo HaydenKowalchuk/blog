@@ -1,3 +1,5 @@
+\#uses
+
 All of the things I use to make the things I enjoy. See what other people use at [uses.tech](https://uses.tech/)
 
 ## hardware
